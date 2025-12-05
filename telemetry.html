@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UGV Telemetry - Real-time</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">UGV Telemetry</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/telemetry">Telemetry</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/configuration">Configuration</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1 class="mb-4">Real-time Telemetry</h1>
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <canvas id="throttleChart"></canvas>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <canvas id="tempChart"></canvas>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <canvas id="voltageChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <h3>Live Data</h3>
+                <div id="telemetry" class="bg-light p-3 rounded" style="height: 500px; overflow-y: auto;">
+                    <pre>Waiting for data...</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const telemetryDiv = document.getElementById('telemetry');
+        const throttleCanvas = document.getElementById('throttleChart').getContext('2d');
+        const tempCanvas = document.getElementById('tempChart').getContext('2d');
+        const voltageCanvas = document.getElementById('voltageChart').getContext('2d');
+
+        function createChart(ctx, label, color) {
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: label,
+                        data: [],
+                        borderColor: color,
+                        borderWidth: 1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: { display: true, text: 'Timestamp' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Value' }
+                        }
+                    }
+                }
+            });
+        }
+
+        const throttleChart = createChart(throttleCanvas, 'Throttle', 'rgba(75, 192, 192, 1)');
+        const tempChart = createChart(tempCanvas, 'Motor Temp (FET)', 'rgba(255, 99, 132, 1)');
+        const voltageChart = createChart(voltageCanvas, 'Voltage In', 'rgba(54, 162, 235, 1)');
+
+        const ws = new WebSocket("ws://" + window.location.host + "/ws");
+
+        ws.onopen = function(event) {
+            console.log("WebSocket connection established.");
+        };
+
+        ws.onmessage = function(event) {
+            const telemetryData = JSON.parse(event.data);
+            telemetryDiv.innerHTML = `<pre>${JSON.stringify(telemetryData, null, 2)}</pre>`;
+            updateChart(throttleChart, telemetryData.timestamp, telemetryData.throttle);
+            updateChart(tempChart, telemetryData.timestamp, telemetryData.rf.temp_fet);
+            updateChart(voltageChart, telemetryData.timestamp, telemetryData.rf.v_in);
+        };
+
+        function updateChart(chart, label, data) {
+            if (chart.data.labels.length > 50) {
+                chart.data.labels.shift();
+                chart.data.datasets.forEach((dataset) => {
+                    dataset.data.shift();
+                });
+            }
+            chart.data.labels.push(label);
+            chart.data.datasets.forEach((dataset) => {
+                dataset.data.push(data);
+            });
+            chart.update();
+        }
+
+        ws.onclose = function(event) {
+            console.log("WebSocket connection closed.");
+        };
+
+        ws.onerror = function(error) {
+            console.log(`WebSocket error: ${error.message}`);
+        };
+    </script>
+</body>
+</html>
