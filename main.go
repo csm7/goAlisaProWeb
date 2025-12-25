@@ -14,7 +14,7 @@ var clientsMutex = &sync.Mutex{}
 var broadcast = make(chan Telemetry)
 
 func main() {
-	broker := getEnv("MQTT_BROKER", "localhost")
+	broker := getEnv("MQTT_BROKER", "broker.mqtt.cool")
 	port := getEnv("MQTT_PORT", "1883")
 	client := setupMQTTClient(broker, port)
 	sub(client)

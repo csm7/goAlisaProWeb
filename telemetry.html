@@ -27,27 +27,91 @@
     </nav>
 
     <div class="container mt-4">
-        <h1 class="mb-4">Real-time Telemetry</h1>
-        <div class="row">
-            <div class="col-lg-8">
-                <div class="row">
-                    <div class="col-12 mb-4">
-                        <h2>Throttle</h2>
-                        <canvas id="throttleChart"></canvas>
-                    </div>
-                    <div class="col-12 mb-4">
-                        <h2>Motor Temperature (FET)</h2>
-                        <canvas id="tempChart"></canvas>
-                    </div>
-                    <div class="col-12 mb-4">
-                        <h2>Voltage In</h2>
-                        <canvas id="voltageChart"></canvas>
+        <h5 class="mb-4">Real-time Telemetry</h5>
+    <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">System Status (Fault Codes)</div>
+                    <div class="card-body">
+                        <div class="row text-center" id="faultStatusPanel">
+                            <div class="col-md-3"><span class="badge bg-success">RF: OK</span></div>
+                            <div class="col-md-3"><span class="badge bg-success">RB: OK</span></div>
+                            <div class="col-md-3"><span class="badge bg-success">LF: OK</span></div>
+                            <div class="col-md-3"><span class="badge bg-success">LB: OK</span></div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4">
+        </div>
+
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body p-2">
+                                <h6 class="card-title text-center">Throttle (Input)</h6>
+                                <canvas id="throttleChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body p-2">
+                                <h6 class="card-title text-center">Input Voltage (V)</h6>
+                                <canvas id="voltageChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body p-2">
+                                <h6 class="card-title text-center">Motor RPM (ERPM)</h6>
+                                <canvas id="rpmChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body p-2">
+                                <h6 class="card-title text-center">Duty Cycle (%)</h6>
+                                <canvas id="dutyChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body p-2">
+                                <h6 class="card-title text-center">Motor Current (A)</h6>
+                                <canvas id="motorCurrentChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body p-2">
+                                <h6 class="card-title text-center">Battery Current (A)</h6>
+                                <canvas id="batteryCurrentChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body p-2">
+                                <h6 class="card-title text-center">FET Temperature (°C)</h6>
+                                <canvas id="tempChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3">
                 <h3>Live Data</h3>
-                <div id="telemetry" class="bg-light p-3 rounded" style="height: 600px; overflow-y: auto;">
+                <div id="telemetry" class="bg-light p-2 rounded" style="height: 800px; overflow-y: auto; font-size: 0.8rem;">
                     <pre>Waiting for data...</pre>
                 </div>
             </div>
