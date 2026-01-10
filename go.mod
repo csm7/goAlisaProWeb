@@ -1,4 +1,4 @@
-module ugv-telemetry-web
+module AlisaProWeb
 
 go 1.24
 
